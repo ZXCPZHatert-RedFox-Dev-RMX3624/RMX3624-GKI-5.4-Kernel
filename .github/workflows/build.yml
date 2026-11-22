@@ -13,10 +13,10 @@ jobs:
       - name: Maximize disk space & add 12GB Swap for LTO
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
-          sudo fallocate -l 12G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          sudo fallocate -l 12G /swapfile_lto
+          sudo chmod 600 /swapfile_lto
+          sudo mkswap /swapfile_lto
+          sudo swapon /swapfile_lto
           free -h
 
       - name: Install dependencies
