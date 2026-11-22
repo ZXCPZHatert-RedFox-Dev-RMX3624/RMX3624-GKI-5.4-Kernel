@@ -19,8 +19,10 @@ jobs:
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
-          mkdir -p ~/toolchain
-          git clone --depth=1 https://gitlab.com -b 12 ~/toolchain/clang
+          mkdir -p ~/toolchain/clang
+          curl -L "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b.tar.gz" -o clang.tar.gz
+          tar -xzf clang.tar.gz -C ~/toolchain/clang
+          rm -f clang.tar.gz
 
       - name: Clone AOSP common-android12-5.4 Kernel Source
         run: |
