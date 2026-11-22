@@ -42,7 +42,7 @@ jobs:
       - name: Configure Kernel (GKI + eBPF + KSU)
         working-directory: /home/runner/work/kernel
         run: |
-          export PATH="$HOME/toolchain/clang/bin:$PATH"
+          export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
           make O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 gki_defconfig
           ./scripts/config --file out/.config \
             -e CONFIG_KSU \
@@ -63,7 +63,7 @@ jobs:
       - name: Compile Kernel Image
         working-directory: /home/runner/work/kernel
         run: |
-          export PATH="$HOME/toolchain/clang/bin:$PATH"
+          export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
           make -j$(nproc --all) O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 Image.gz
 
       - name: Upload Compiled Kernel Artifact
