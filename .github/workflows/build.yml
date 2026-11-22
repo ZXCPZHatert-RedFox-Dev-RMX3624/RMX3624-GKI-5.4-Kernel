@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y bc bison build-essential ccache curl flex git libssl-dev libelf-dev python3 python-is-python3 zstd lz4 cpio rsync clang-14 lld-14 llvm-14
+          sudo apt-get install -y bc bison build-essential ccache curl flex git libssl-dev libelf-dev python3 python-is-python3 zstd lz4 cpio rsync clang-14 lld-14 llvm-14 gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
@@ -83,7 +83,11 @@ jobs:
             -d CONFIG_UAPI_HEADER_TEST \
             -d CONFIG_MODULE_SIG \
             -d CONFIG_MODULE_SIG_FORCE \
-            -d CONFIG_LOCALVERSION_AUTO
+            -d CONFIG_LOCALVERSION_AUTO \
+            -d CONFIG_LTO_CLANG \
+            -d CONFIG_LTO_CLANG_THIN \
+            -d CONFIG_LTO_CLANG_FULL \
+            -e CONFIG_LTO_NONE
           make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
 
       - name: Compile Unisoc ums9230 Kernel Image
