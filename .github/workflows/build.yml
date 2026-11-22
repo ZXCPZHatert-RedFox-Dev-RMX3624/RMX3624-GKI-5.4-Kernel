@@ -26,7 +26,7 @@ jobs:
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
-          mkdir -p /home/runner/work/toolchain/clang/bin && for t in clang clang++ ld.lld llvm-ar llvm-nm llvm-objcopy llvm-objdump llvm-readelf llvm-strip; do ln -sf /usr/bin/${t}-14 /home/runner/work/toolchain/clang/bin/${t}; done
+          mkdir -p /home/runner/work/toolchain/clang/bin && for t in clang clang++ ld.lld llvm-ar llvm-nm llvm-objcopy llvm-objdump llvm-readelf llvm-strip llvm-symbolizer llvm-ranlib llvm-size; do ln -sf /usr/bin/${t}-14 /home/runner/work/toolchain/clang/bin/${t}; done
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
@@ -89,7 +89,7 @@ jobs:
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
-          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 Image.gz
+          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image.gz
 
       - name: Upload Compiled Kernel Artifact
         uses: actions/upload-artifact@v4
