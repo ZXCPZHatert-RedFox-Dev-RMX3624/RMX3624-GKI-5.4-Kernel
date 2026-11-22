@@ -56,6 +56,7 @@ jobs:
             -e CONFIG_INET_TCP_DIAG \
             -e CONFIG_SECURITY_SELINUX_DEVELOP \
             -d CONFIG_MODVERSIONS \
+            -d CONFIG_UAPI_HEADER_TEST \
             -d CONFIG_MODULE_SIG \
             -d CONFIG_MODULE_SIG_FORCE
           make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
