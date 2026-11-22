@@ -19,28 +19,28 @@ jobs:
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
-          mkdir -p ~/toolchain/clang
+          mkdir -p /home/runner/work/toolchain/clang
           curl -L "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b.tar.gz" -o clang.tar.gz
-          tar -xzf clang.tar.gz -C ~/toolchain/clang
+          tar -xzf clang.tar.gz -C /home/runner/work/toolchain/clang
           rm -f clang.tar.gz
 
       - name: Clone AOSP common-android12-5.4 Kernel Source
         run: |
-          git clone --depth=1 https://android.googlesource.com/kernel/common.git -b android12-5.4-lts ~/kernel
+          git clone --depth=1 https://android.googlesource.com/kernel/common.git -b android12-5.4-lts /home/runner/work/kernel
 
       - name: Integrate KernelSU-Next
-        working-directory: ~/kernel
+        working-directory: /home/runner/work/kernel
         run: |
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next
 
       - name: Apply Vendor Module Compatibility & Permissive SELinux Patches
-        working-directory: ~/kernel
+        working-directory: /home/runner/work/kernel
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
 
       - name: Configure Kernel (GKI + eBPF + KSU)
-        working-directory: ~/kernel
+        working-directory: /home/runner/work/kernel
         run: |
           export PATH="$HOME/toolchain/clang/bin:$PATH"
           make O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 gki_defconfig
@@ -61,7 +61,7 @@ jobs:
           make O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
 
       - name: Compile Kernel Image
-        working-directory: ~/kernel
+        working-directory: /home/runner/work/kernel
         run: |
           export PATH="$HOME/toolchain/clang/bin:$PATH"
           make -j$(nproc --all) O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 Image.gz
@@ -70,4 +70,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: RMX3624-GKI-5.4-Image-gz
-          path: ~/kernel/out/arch/arm64/boot/Image.gz
+          path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
