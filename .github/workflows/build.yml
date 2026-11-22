@@ -30,7 +30,7 @@ jobs:
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
-          git clone --depth=1 https://github.com /home/runner/work/kernel
+          git clone --depth=1 https://github.com/rifsxd/android_kernel_realme_RMX3511.git /home/runner/work/kernel
 
       - name: Apply Vendor Module Compatibility, Permissive SELinux & A16/A17 Patches
         working-directory: /home/runner/work/kernel
