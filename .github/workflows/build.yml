@@ -37,6 +37,7 @@ jobs:
         working-directory: /home/runner/work/kernel
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
+          find KernelSU-Next -type f -exec sed -i "s|<linux/pgtable.h>|<asm/pgtable.h>|g" {} +
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
 
       - name: Configure Kernel (GKI + eBPF + KSU)
