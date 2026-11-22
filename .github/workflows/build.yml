@@ -28,16 +28,14 @@ jobs:
         run: |
           git clone --depth=1 https://android.googlesource.com/kernel/common.git -b android12-5.4-lts /home/runner/work/kernel
 
-      - name: Integrate KernelSU-Next
         working-directory: /home/runner/work/kernel
         run: |
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next
+          curl -LSs "https://://githubusercontent.com" | bash -s v0.9.5
 
       - name: Apply Vendor Module Compatibility & Permissive SELinux Patches
         working-directory: /home/runner/work/kernel
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
-          find KernelSU-Next -not -path "*/.git/*" -type f -exec sed -i "s|<linux/pgtable.h>|<asm/pgtable.h>|g; s|strncpy_from_user_nofault|strncpy_from_user|g; s|copy_to_kernel_nofault|probe_kernel_write|g" {} +
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
 
       - name: Configure Kernel (GKI + eBPF + KSU)
