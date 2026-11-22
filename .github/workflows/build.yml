@@ -22,11 +22,11 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y bc bison build-essential ccache curl flex git libssl-dev libelf-dev python3 python-is-python3 zstd lz4 cpio rsync
+          sudo apt-get install -y bc bison build-essential ccache curl flex git libssl-dev libelf-dev python3 python-is-python3 zstd lz4 cpio rsync clang-14 lld-14 llvm-14
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
-          git clone --depth=1 https://github.com /home/runner/work/toolchain/clang
+          mkdir -p /home/runner/work/toolchain/clang/bin && for t in clang clang++ ld.lld llvm-ar llvm-nm llvm-objcopy llvm-objdump llvm-readelf llvm-strip; do ln -sf /usr/bin/${t}-14 /home/runner/work/toolchain/clang/bin/${t}; done
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
