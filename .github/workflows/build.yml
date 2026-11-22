@@ -1,4 +1,4 @@
-name: Build Custom Unisoc ums9230 Kernel 5.4 for Realme C33 (RMX3624)
+name: Build Custom Unisoc ums9230 Kernel 5.4 (A15/A16/A17 + EROFS) for RMX3624
 
 on:
   workflow_dispatch:
@@ -27,21 +27,22 @@ jobs:
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
           mkdir -p /home/runner/work/toolchain/clang
-          curl -L "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b.tar.gz" -o clang.tar.gz
+          curl -L "https://googlesource.com" -o clang.tar.gz
           tar -xzf clang.tar.gz -C /home/runner/work/toolchain/clang
           rm -f clang.tar.gz
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
-          git clone --depth=1 https://github.com/rifsxd/android_kernel_realme_RMX3511.git /home/runner/work/kernel
+          git clone --depth=1 https://github.com /home/runner/work/kernel
 
-      - name: Apply Vendor Module Compatibility & Permissive SELinux Patches
+      - name: Apply Vendor Module Compatibility, Permissive SELinux & A16/A17 Patches
         working-directory: /home/runner/work/kernel
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
+          sed -i 's/-rev6/-rev7-A16-A17/g' Makefile || true
 
-      - name: Configure Kernel using RMX3624 Stock Config + KSU + eBPF
+      - name: Configure Kernel (RMX3624 + KSU + Full eBPF + EROFS + A16/A17 Support)
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
@@ -53,10 +54,33 @@ jobs:
             -e CONFIG_BPF_SYSCALL \
             -e CONFIG_BPF_JIT \
             -e CONFIG_BPF_JIT_ALWAYS_ON \
+            -e CONFIG_HAVE_EBPF_JIT \
             -e CONFIG_CGROUP_BPF \
+            -e CONFIG_BPF_EVENTS \
+            -e CONFIG_BPF_KPROBE_OVERRIDE \
+            -e CONFIG_BPF_STREAM_PARSER \
             -e CONFIG_NETFILTER_XT_MATCH_BPF \
+            -e CONFIG_NET_CLS_BPF \
+            -e CONFIG_NET_ACT_BPF \
             -e CONFIG_INET_UDP_DIAG \
             -e CONFIG_INET_TCP_DIAG \
+            -e CONFIG_EROFS_FS \
+            -e CONFIG_EROFS_FS_XATTR \
+            -e CONFIG_EROFS_FS_POSIX_ACL \
+            -e CONFIG_EROFS_FS_SECURITY \
+            -e CONFIG_EROFS_FS_ZIP \
+            -e CONFIG_EROFS_FS_ZIP_LZMA \
+            -e CONFIG_OVERLAY_FS \
+            -e CONFIG_INCREMENTAL_FS \
+            -e CONFIG_F2FS_FS_COMPRESSION \
+            -e CONFIG_F2FS_FS_LZ4 \
+            -e CONFIG_F2FS_FS_ZSTD \
+            -e CONFIG_PSI \
+            -e CONFIG_MEMCG \
+            -e CONFIG_CGROUP_SCHED \
+            -e CONFIG_CGROUP_PIDS \
+            -e CONFIG_CGROUP_FREEZER \
+            -e CONFIG_CPUSETS \
             -e CONFIG_SECURITY_SELINUX_DEVELOP \
             -d CONFIG_MODVERSIONS \
             -d CONFIG_UAPI_HEADER_TEST \
@@ -74,5 +98,5 @@ jobs:
       - name: Upload Compiled Kernel Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-gz
+          name: RMX3624-GKI-5.4-Image-gz-A16-A17
           path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
