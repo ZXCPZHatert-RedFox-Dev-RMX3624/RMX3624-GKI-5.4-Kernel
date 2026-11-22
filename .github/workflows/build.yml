@@ -56,6 +56,8 @@ jobs:
             -e CONFIG_INET_TCP_DIAG \
             -e CONFIG_SECURITY_SELINUX_DEVELOP \
             -d CONFIG_MODVERSIONS \
+            -d CONFIG_LTO_CLANG_FULL \
+            -e CONFIG_LTO_CLANG_THIN \
             -d CONFIG_UAPI_HEADER_TEST \
             -d CONFIG_MODULE_SIG \
             -d CONFIG_MODULE_SIG_FORCE
