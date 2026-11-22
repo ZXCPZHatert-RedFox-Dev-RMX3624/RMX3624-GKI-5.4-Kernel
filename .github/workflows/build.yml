@@ -1,4 +1,4 @@
-name: Build Custom GKI 5.4 Kernel for Realme C33 (RMX3624)
+name: Build Custom Unisoc ums9230 Kernel 5.4 for Realme C33 (RMX3624)
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout repo with stock_config
+      - name: Checkout repo with RMX3624 stock_config
         uses: actions/checkout@v4
 
       - name: Maximize disk space & add 12GB Swap for LTO
@@ -31,14 +31,9 @@ jobs:
           tar -xzf clang.tar.gz -C /home/runner/work/toolchain/clang
           rm -f clang.tar.gz
 
-      - name: Clone AOSP common-android12-5.4 Kernel Source
+      - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
-          git clone --depth=1 https://android.googlesource.com/kernel/common.git -b android12-5.4-lts /home/runner/work/kernel
-
-      - name: Integrate KernelSU v0.9.5
-        working-directory: /home/runner/work/kernel
-        run: |
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/v0.9.5/kernel/setup.sh" | bash -s v0.9.5
+          git clone --depth=1 https://github.com/rifsxd/android_kernel_realme_RMX3511.git /home/runner/work/kernel
 
       - name: Apply Vendor Module Compatibility & Permissive SELinux Patches
         working-directory: /home/runner/work/kernel
@@ -70,7 +65,7 @@ jobs:
             -d CONFIG_LOCALVERSION_AUTO
           make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
 
-      - name: Compile Kernel Image
+      - name: Compile Unisoc ums9230 Kernel Image
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
