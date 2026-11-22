@@ -26,12 +26,12 @@ jobs:
 
       - name: Clone AOSP common-android12-5.4 Kernel Source
         run: |
-          git clone --depth=1 https://googlesource.com -b android12-5.4-lts ~/kernel
+          git clone --depth=1 https://android.googlesource.com/kernel/common.git -b android12-5.4-lts ~/kernel
 
       - name: Integrate KernelSU-Next
         working-directory: ~/kernel
         run: |
-          curl -LSs "https://githubusercontent.com" | bash -s next
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next
 
       - name: Apply Vendor Module Compatibility & Permissive SELinux Patches
         working-directory: ~/kernel
