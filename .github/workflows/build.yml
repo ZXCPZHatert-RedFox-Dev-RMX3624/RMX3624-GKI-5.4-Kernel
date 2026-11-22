@@ -26,10 +26,7 @@ jobs:
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
-          mkdir -p /home/runner/work/toolchain/clang
-          curl -L "https://github.com/ZyCromerZ/Clang/releases/download/12.0.7-r416183b-release/Clang-12.0.7-r416183b-20210924.tar.gz" -o clang.tar.gz
-          tar -xzf clang.tar.gz -C /home/runner/work/toolchain/clang
-          rm -f clang.tar.gz
+          mkdir -p /home/runner/work/toolchain/clang/bin && for t in clang clang++ ld.lld llvm-ar llvm-nm llvm-objcopy llvm-objdump llvm-readelf llvm-strip; do ln -sf /usr/bin/${t}-14 /home/runner/work/toolchain/clang/bin/${t}; done
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
@@ -71,7 +68,6 @@ jobs:
             -e CONFIG_EROFS_FS_ZIP \
             -e CONFIG_EROFS_FS_ZIP_LZMA \
             -e CONFIG_OVERLAY_FS \
-            -e CONFIG_INCREMENTAL_FS \
             -e CONFIG_F2FS_FS_COMPRESSION \
             -e CONFIG_F2FS_FS_LZ4 \
             -e CONFIG_F2FS_FS_ZSTD \
