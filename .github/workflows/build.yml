@@ -26,10 +26,7 @@ jobs:
 
       - name: Download Clang Toolchain (AOSP r416183b)
         run: |
-          mkdir -p /home/runner/work/toolchain/clang
-          curl -L "https://googlesource.com" -o clang.tar.gz
-          tar -xzf clang.tar.gz -C /home/runner/work/toolchain/clang
-          rm -f clang.tar.gz
+          git clone --depth=1 https://github.com /home/runner/work/toolchain/clang
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
