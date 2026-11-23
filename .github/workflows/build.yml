@@ -55,7 +55,6 @@ jobs:
             -e CONFIG_KSU_SUSFS_ENABLE_LOG \
             -e CONFIG_TCP_CONG_ADVANCED \
             -e CONFIG_TCP_CONG_BBR \
-            -e CONFIG_DEFAULT_BBR \
             -e CONFIG_WIREGUARD \
             -e CONFIG_ZRAM \
             -e CONFIG_SWAP \
@@ -64,11 +63,7 @@ jobs:
             -e CONFIG_ZSTD_DECOMPRESS \
             -e CONFIG_CRYPTO_LZ4 \
             -e CONFIG_BOEFFLA_WL_BLOCKER \
-            -e CONFIG_USB_CONFIGFS_F_HID \
-            -e CONFIG_USB_CONFIGFS_MASS_STORAGE \
             -e CONFIG_EXFAT_FS \
-            -e CONFIG_NTFS_FS \
-            -e CONFIG_NTFS_RW \
             -e CONFIG_FUSE_FS \
             -e CONFIG_BPF \
             -e CONFIG_BPF_SYSCALL \
