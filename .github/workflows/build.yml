@@ -35,7 +35,7 @@ jobs:
       - name: Integrate KernelSU-Next & Apply Vendor Compatibility Patches
         working-directory: /home/runner/work/kernel
         run: |
-          rm -rf KernelSU drivers/kernelsu
+          rm -rf KernelSU KernelSU-Next drivers/kernelsu && sed -i "/kernelsu/d" drivers/Kconfig drivers/Makefile
           curl -LSs "https://githubusercontent.com" | bash -s legacy
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
