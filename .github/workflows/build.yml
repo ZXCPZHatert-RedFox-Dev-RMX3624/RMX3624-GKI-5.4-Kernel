@@ -93,10 +93,10 @@ jobs:
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
-          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image.gz
+          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image
 
       - name: Upload Compiled Kernel Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-gz-rev8-A16-A17
-          path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
+          name: RMX3624-GKI-5.4-Image-rev8-A16-A17
+          path: /home/runner/work/kernel/out/arch/arm64/boot/Image
