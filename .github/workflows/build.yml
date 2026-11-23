@@ -47,23 +47,9 @@ jobs:
           cp $GITHUB_WORKSPACE/arch/arm64/configs/rmx3624_defconfig out/.config
           ./scripts/config --file out/.config \
             -e CONFIG_KSU \
-            -e CONFIG_KSU_SUSFS \
-            -e CONFIG_KSU_SUSFS_SUS_PATH \
-            -e CONFIG_KSU_SUSFS_SUS_MOUNT \
-            -e CONFIG_KSU_SUSFS_SUS_KSTAT \
-            -e CONFIG_KSU_SUSFS_SPOOF_UNAME \
-            -e CONFIG_KSU_SUSFS_ENABLE_LOG \
             -e CONFIG_TCP_CONG_ADVANCED \
             -e CONFIG_TCP_CONG_BBR \
             -e CONFIG_WIREGUARD \
-            -e CONFIG_ZRAM \
-            -e CONFIG_SWAP \
-            -e CONFIG_CRYPTO_ZSTD \
-            -e CONFIG_ZSTD_COMPRESS \
-            -e CONFIG_ZSTD_DECOMPRESS \
-            -e CONFIG_CRYPTO_LZ4 \
-            -e CONFIG_BOEFFLA_WL_BLOCKER \
-            -e CONFIG_EXFAT_FS \
             -e CONFIG_FUSE_FS \
             -e CONFIG_BPF \
             -e CONFIG_BPF_SYSCALL \
