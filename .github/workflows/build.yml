@@ -30,14 +30,14 @@ jobs:
 
       - name: Clone Unisoc ums9230 (RMX3511/RMX3624) 5.4 Kernel Source
         run: |
-          git clone --depth=1 https://github.com /home/runner/work/kernel
+          gh repo clone rifsxd/android_kernel_realme_RMX3511 /home/runner/work/kernel -- --depth=1
 
       - name: Integrate KernelSU-Next (legacy syscall_table hook) & Apply Vendor Patches
         working-directory: /home/runner/work/kernel
         run: |
           rm -rf KernelSU KernelSU-Next drivers/kernelsu
           sed -i "/kernelsu/d" drivers/Kconfig drivers/Makefile
-          curl -LSs "https://githubusercontent.com" | bash -s legacy
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/legacy/kernel/setup.sh" | bash -s legacy
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
           sed -i 's/-rev6/-rev13-3GB-Beast-KSUNext/g' Makefile || true
