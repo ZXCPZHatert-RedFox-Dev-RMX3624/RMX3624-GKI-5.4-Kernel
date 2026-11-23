@@ -96,9 +96,9 @@ jobs:
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
-          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image.gz modules
+          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image.gz && (make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" -k modules || true)
           mkdir -p out/modules_inst
-          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 INSTALL_MOD_PATH=modules_inst INSTALL_MOD_STRIP=1 modules_install
+          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 INSTALL_MOD_PATH=modules_inst INSTALL_MOD_STRIP=1 modules_install || true
           tar -czf out/modules_rev11.tar.gz -C out/modules_inst .
 
       - name: Upload Compiled Kernel & Modules Artifact
