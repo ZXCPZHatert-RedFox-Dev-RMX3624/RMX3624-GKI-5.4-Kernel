@@ -37,7 +37,7 @@ jobs:
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
-          sed -i 's/-rev6/-rev9-A16-A17/g' Makefile || true
+          sed -i 's/-rev6/-rev10-Flagship-A16-A17/g' Makefile || true
 
       - name: Configure Kernel (RMX3624 + KSU + Full eBPF + EROFS + A16/A17 Support)
         working-directory: /home/runner/work/kernel
@@ -49,7 +49,7 @@ jobs:
             -e CONFIG_KSU \
             -e CONFIG_TCP_CONG_ADVANCED \
             -e CONFIG_TCP_CONG_BBR \
-            -e CONFIG_WIREGUARD -e CONFIG_ZSMALLOC -e CONFIG_ZRAM -e CONFIG_CRYPTO_LZ4 -e CONFIG_CRYPTO_ZSTD -e CONFIG_ZSTD_COMPRESS -e CONFIG_ZSTD_DECOMPRESS -e CONFIG_BOEFFLA_WL_BLOCKER -e CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE \
+            -e CONFIG_WIREGUARD -e CONFIG_ZSMALLOC -e CONFIG_ZRAM -e CONFIG_CRYPTO_LZ4 -e CONFIG_CRYPTO_ZSTD -e CONFIG_ZSTD_COMPRESS -e CONFIG_ZSTD_DECOMPRESS -e CONFIG_BOEFFLA_WL_BLOCKER -e CONFIG_TCP_CONG_WESTWOOD -e CONFIG_TCP_CONG_HTCP -e CONFIG_DEFAULT_BBR --set-str CONFIG_DEFAULT_TCP_CONG bbr -e CONFIG_IP_NF_TARGET_TTL -e CONFIG_IP6_NF_TARGET_HL -e CONFIG_NETFILTER_XT_TARGET_HL -e CONFIG_ZSWAP -e CONFIG_CLEANCACHE -e CONFIG_FRONTSWAP -e CONFIG_EXFAT_FS -e CONFIG_NTFS_FS -e CONFIG_ISO9660_FS -e CONFIG_UDF_FS -e CONFIG_HID_SONY -e CONFIG_JOYSTICK_XPAD -e CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE \
             -e CONFIG_FUSE_FS \
             -e CONFIG_BPF \
             -e CONFIG_BPF_SYSCALL \
@@ -98,5 +98,5 @@ jobs:
       - name: Upload Compiled Kernel Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-rev9-A16-A17
+          name: RMX3624-GKI-5.4-Image-rev10-Flagship-A16-A17
           path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
