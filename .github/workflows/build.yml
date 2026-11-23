@@ -39,7 +39,7 @@ jobs:
           curl -LSs "https://githubusercontent.com" | bash -s legacy
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
-          sed -i 's/-rev6/-rev11-Flagship-KSUNext/g' Makefile || true
+          sed -i 's/-rev6/-rev12-Flagship-KSUNext/g' Makefile || true
 
       - name: Configure Kernel (RMX3624 + KernelSU-Next + Full eBPF + EROFS + A16/A17)
         working-directory: /home/runner/work/kernel
@@ -48,7 +48,7 @@ jobs:
           mkdir -p out
           cp $GITHUB_WORKSPACE/arch/arm64/configs/rmx3624_defconfig out/.config
           ./scripts/config --file out/.config \
-            -e CONFIG_KSU \
+            -e CONFIG_KSU -e CONFIG_KSU_MANUAL_HOOK -d CONFIG_KPROBES \
             -e CONFIG_KSU_SUSFS \
             -e CONFIG_TCP_CONG_ADVANCED \
             -e CONFIG_TCP_CONG_BBR \
@@ -104,7 +104,7 @@ jobs:
       - name: Upload Compiled Kernel & Modules Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-rev11-Flagship-KSUNext
+          name: RMX3624-GKI-5.4-Image-rev12-Flagship-KSUNext
           path: |
             /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
             /home/runner/work/kernel/out/modules_rev11.tar.gz
