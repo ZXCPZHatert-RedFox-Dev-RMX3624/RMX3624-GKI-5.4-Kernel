@@ -3,11 +3,6 @@ name: Build Custom Unisoc ums9230 Kernel 5.4 (rev9)
 on:
   workflow_dispatch:
 
-name: Build Custom Unisoc ums9230 Kernel 5.4 (rev9 A15/A16/A17 + Signed Boot) for RMX3624
-
-on:
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-22.04
