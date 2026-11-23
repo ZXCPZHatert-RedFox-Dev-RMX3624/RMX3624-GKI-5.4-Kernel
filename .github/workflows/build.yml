@@ -1,4 +1,4 @@
-name: Build Custom Unisoc ums9230 Kernel 5.4 (A15/A16/A17 + EROFS) for RMX3624
+name: Build Custom Unisoc ums9230 Kernel 5.4 rev11 (KernelSU-Next + A16/A17)
 
 on:
   workflow_dispatch:
@@ -32,14 +32,16 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/rifsxd/android_kernel_realme_RMX3511.git /home/runner/work/kernel
 
-      - name: Apply Vendor Module Compatibility, Permissive SELinux & A16/A17 Patches
+      - name: Integrate KernelSU-Next & Apply Vendor Compatibility Patches
         working-directory: /home/runner/work/kernel
         run: |
+          rm -rf KernelSU drivers/kernelsu
+          curl -LSs "https://githubusercontent.com" | bash -s legacy
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
-          sed -i 's/-rev6/-rev10-Flagship-A16-A17/g' Makefile || true
+          sed -i 's/-rev6/-rev11-Flagship-KSUNext/g' Makefile || true
 
-      - name: Configure Kernel (RMX3624 + KSU + Full eBPF + EROFS + A16/A17 Support)
+      - name: Configure Kernel (RMX3624 + KernelSU-Next + Full eBPF + EROFS + A16/A17)
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
@@ -47,9 +49,10 @@ jobs:
           cp $GITHUB_WORKSPACE/arch/arm64/configs/rmx3624_defconfig out/.config
           ./scripts/config --file out/.config \
             -e CONFIG_KSU \
+            -e CONFIG_KSU_SUSFS \
             -e CONFIG_TCP_CONG_ADVANCED \
             -e CONFIG_TCP_CONG_BBR \
-            -e CONFIG_WIREGUARD -e CONFIG_ZSMALLOC -e CONFIG_ZRAM -e CONFIG_CRYPTO_LZ4 -e CONFIG_CRYPTO_ZSTD -e CONFIG_ZSTD_COMPRESS -e CONFIG_ZSTD_DECOMPRESS -e CONFIG_BOEFFLA_WL_BLOCKER -e CONFIG_TCP_CONG_WESTWOOD -e CONFIG_TCP_CONG_HTCP -e CONFIG_DEFAULT_BBR --set-str CONFIG_DEFAULT_TCP_CONG bbr -e CONFIG_IP_NF_TARGET_TTL -e CONFIG_IP6_NF_TARGET_HL -e CONFIG_NETFILTER_XT_TARGET_HL -e CONFIG_ZSWAP -e CONFIG_CLEANCACHE -e CONFIG_FRONTSWAP -e CONFIG_EXFAT_FS -e CONFIG_NTFS_FS -e CONFIG_ISO9660_FS -e CONFIG_UDF_FS -e CONFIG_HID_SONY -e CONFIG_JOYSTICK_XPAD -e CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE \
+            -e CONFIG_WIREGUARD -e CONFIG_ZSMALLOC -e CONFIG_ZRAM -e CONFIG_CRYPTO_LZ4 -e CONFIG_CRYPTO_ZSTD -e CONFIG_ZSTD_COMPRESS -e CONFIG_ZSTD_DECOMPRESS -e CONFIG_BOEFFLA_WL_BLOCKER -e CONFIG_TCP_CONG_WESTWOOD -e CONFIG_TCP_CONG_HTCP -e CONFIG_DEFAULT_BBR --set-str CONFIG_DEFAULT_TCP_CONG bbr -e CONFIG_IP_NF_TARGET_TTL -e CONFIG_IP6_NF_TARGET_HL -e CONFIG_NETFILTER_XT_TARGET_HL -e CONFIG_ZSWAP -e CONFIG_CLEANCACHE -e CONFIG_FRONTSWAP -e CONFIG_EXFAT_FS -e CONFIG_NTFS_FS -e CONFIG_ISO9660_FS -e CONFIG_UDF_FS -e CONFIG_HID_SONY -e CONFIG_HID_NINTENDO -e CONFIG_JOYSTICK_XPAD -e CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE \
             -e CONFIG_FUSE_FS \
             -e CONFIG_BPF \
             -e CONFIG_BPF_SYSCALL \
@@ -89,14 +92,19 @@ jobs:
             -d CONFIG_LOCALVERSION_AUTO
           make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
 
-      - name: Compile Unisoc ums9230 Kernel Image.gz
+      - name: Compile Kernel Image.gz & Modules
         working-directory: /home/runner/work/kernel
         run: |
           export PATH="/home/runner/work/toolchain/clang/bin:$PATH"
-          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image.gz
+          make -j$(nproc --all) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 KCFLAGS="-Wno-error" HOSTCFLAGS="-Wno-error" Image.gz modules
+          mkdir -p out/modules_inst
+          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 INSTALL_MOD_PATH=modules_inst INSTALL_MOD_STRIP=1 modules_install
+          tar -czf out/modules_rev11.tar.gz -C out/modules_inst .
 
-      - name: Upload Compiled Kernel Artifact
+      - name: Upload Compiled Kernel & Modules Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-rev10-Flagship-A16-A17
-          path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
+          name: RMX3624-GKI-5.4-Image-rev11-Flagship-KSUNext
+          path: |
+            /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
+            /home/runner/work/kernel/out/modules_rev11.tar.gz
