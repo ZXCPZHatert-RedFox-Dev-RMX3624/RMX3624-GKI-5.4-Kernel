@@ -95,7 +95,8 @@ jobs:
             -e CONFIG_DEFAULT_BBR \
             -e CONFIG_NET_SCH_FQ_CODEL \
             -e CONFIG_NET_SCH_CAKE \
-            -e CONFIG_DEFAULT_FQ_CODEL \
+            -e CONFIG_DEFAULT_CAKE \
+            -e CONFIG_ZRAM_DEF_COMP_ZSTD \
             -e CONFIG_IP_SET \
             -e CONFIG_NETFILTER_XT_TARGET_HL \
             -e CONFIG_NETFILTER_XT_TARGET_TPROXY \
