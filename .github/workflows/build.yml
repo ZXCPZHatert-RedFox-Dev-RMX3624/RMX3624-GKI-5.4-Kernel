@@ -85,6 +85,28 @@ jobs:
             -e CONFIG_CPUSETS \
             -e CONFIG_KSM \
             -e CONFIG_SECURITY_SELINUX_DEVELOP \
+            -e CONFIG_KSU_SUSFS \
+            -e CONFIG_KSU_SUSFS_SUS_PATH \
+            -e CONFIG_KSU_SUSFS_SUS_MOUNT \
+            -e CONFIG_KSU_SUSFS_SUS_KSTAT \
+            -e CONFIG_KSU_SUSFS_SPOOF_UNAME \
+            -e CONFIG_TCP_CONG_ADVANCED \
+            -e CONFIG_TCP_CONG_BBR \
+            -e CONFIG_DEFAULT_BBR \
+            -e CONFIG_NET_SCH_FQ_CODEL \
+            -e CONFIG_NET_SCH_CAKE \
+            -e CONFIG_DEFAULT_FQ_CODEL \
+            -e CONFIG_IP_SET \
+            -e CONFIG_NETFILTER_XT_TARGET_HL \
+            -e CONFIG_NETFILTER_XT_TARGET_TPROXY \
+            -e CONFIG_ZSTD_COMPRESS \
+            -e CONFIG_ZSTD_DECOMPRESS \
+            -e CONFIG_CRYPTO_ZSTD \
+            -e CONFIG_LZ4HC_COMPRESS \
+            -e CONFIG_CRYPTO_LZ4HC \
+            -e CONFIG_EXFAT_FS \
+            -e CONFIG_ISO9660_FS \
+            -e CONFIG_UDF_FS \
             -d CONFIG_MODVERSIONS \
             -d CONFIG_UAPI_HEADER_TEST \
             -d CONFIG_MODULE_SIG \
