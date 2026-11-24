@@ -111,7 +111,8 @@ jobs:
             -d CONFIG_UAPI_HEADER_TEST \
             -d CONFIG_MODULE_SIG \
             -d CONFIG_MODULE_SIG_FORCE \
-            -d CONFIG_LOCALVERSION_AUTO
+            -d CONFIG_LOCALVERSION_AUTO \
+            --set-str CONFIG_LOCALVERSION "-rev16-Ultimate+"
           make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
           grep -E "CONFIG_KSU" out/.config
 
