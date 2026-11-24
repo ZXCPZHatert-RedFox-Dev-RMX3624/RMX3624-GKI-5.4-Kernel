@@ -1,4 +1,4 @@
-name: Build Custom Unisoc ums9230 Kernel 5.4 rev15-Ultimate (KernelSU + A16/A17)
+name: Build Custom Unisoc ums9230 Kernel 5.4 rev16-Ultimate (KernelSU + A16/A17)
 
 on:
   workflow_dispatch:
@@ -32,12 +32,12 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/rifsxd/android_kernel_realme_RMX3511.git /home/runner/work/kernel
 
-      - name: Apply Vendor Patches & Set Version rev15-Ultimate
+      - name: Apply Vendor Patches & Set Version rev16-Ultimate
         working-directory: /home/runner/work/kernel
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
-          sed -i 's/-rev6/-rev15-Ultimate/g' Makefile || true
+          sed -i 's/-rev6/-rev16-Ultimate/g' Makefile || true
 
       - name: Configure Kernel (RMX3624 + Native KernelSU + 3GB RAM ZSTD + eBPF + A16/A17)
         working-directory: /home/runner/work/kernel
@@ -124,5 +124,5 @@ jobs:
       - name: Upload Compiled Kernel Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-rev15-Ultimate
+          name: RMX3624-GKI-5.4-Image-rev16-Ultimate
           path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
