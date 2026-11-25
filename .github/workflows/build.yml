@@ -1,4 +1,4 @@
-name: Build Custom Unisoc ums9230 Kernel 5.4 rev16-Ultimate (KernelSU + A16/A17)
+name: Build Custom Unisoc ums9230 Kernel 5.4 rev17-Ultimate (KernelSU + A16/A17)
 
 on:
   workflow_dispatch:
@@ -32,12 +32,28 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/rifsxd/android_kernel_realme_RMX3511.git /home/runner/work/kernel
 
-      - name: Apply Vendor Patches & Set Version rev16-Ultimate
+      - name: Patch sprd_oled driver for true 4095 peak brightness
+        working-directory: /home/runner/work/kernel
+        run: |
+          python3 -c '
+          import glob, re
+          for f in glob.glob("drivers/gpu/drm/sprd/*.c"):
+              txt = open(f).read()
+              if "sprd_oled_set_brightness" in txt:
+                  m = re.search(r"int\s+sprd_oled_set_brightness\s*\([^)]*\)\s*\{", txt)
+                  if m:
+                      inject = m.group(0) + "\n\tif (level >= 3700 && level < 4095) level = 4095;"
+                      txt = txt[:m.start()] + inject + txt[m.end():]
+                      open(f, "w").write(txt)
+                      print("Patched peak brightness 4095 in:", f)
+          '
+
+      - name: Apply Vendor Patches & Set Version rev17-Ultimate
         working-directory: /home/runner/work/kernel
         run: |
           sed -i 's/return -ENOEXEC;/return 0;/g' kernel/module.c
           sed -i 's/bool selinux_is_enforcing(void)/bool selinux_is_enforcing(void) { return false; } bool _unused_selinux_is_enforcing(void)/g' security/selinux/include/security.h || true
-          sed -i 's/-rev6/-rev16-Ultimate/g' Makefile || true
+          sed -i 's/^EXTRAVERSION =.*/EXTRAVERSION =/g' Makefile && touch .scmversion
 
       - name: Configure Kernel (RMX3624 + Native KernelSU + 3GB RAM ZSTD + eBPF + A16/A17)
         working-directory: /home/runner/work/kernel
@@ -113,7 +129,7 @@ jobs:
             -d CONFIG_MODULE_SIG \
             -d CONFIG_MODULE_SIG_FORCE \
             -d CONFIG_LOCALVERSION_AUTO \
-            --set-str CONFIG_LOCALVERSION "-RedFox-rev16-Ultimate+"
+            --set-str CONFIG_LOCALVERSION "-RedFox-rev17-Ultimate+"
           make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LLVM=1 LLVM_IAS=1 olddefconfig
           grep -E "CONFIG_KSU" out/.config
 
@@ -126,5 +142,5 @@ jobs:
       - name: Upload Compiled Kernel Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RMX3624-GKI-5.4-Image-rev16-Ultimate
+          name: RMX3624-GKI-5.4-Image-rev17-Ultimate
           path: /home/runner/work/kernel/out/arch/arm64/boot/Image.gz
